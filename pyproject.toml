@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diabete_prediction"
+version = "0.0.1"
+authors = [
+  { name="Manuela Detomaso", email="manueladetomaso@gmail.com" },
+]
+maintainers = [
+  { name="Manuela Detomaso", email="manueladetomaso@gmail.com" }
+]
+description = "A small example package to create a simple machine learning model for diabete prediction"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+  "appdirs==1.4.4",
+  "configparser==5.0.2",
+  "pandas==2.1.4",
+  "pyspark==3.5.1",
+]
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+diabete_prediction = ["config.ini"]
+
+[project.urls]
+Homepage = "https://github.com/ManuelaDetomaso/mlmodelexamplepackage"
+Issues = "https://github.com/ManuelaDetomaso/mlmodelexamplepackage/issues"
