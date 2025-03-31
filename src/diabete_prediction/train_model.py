@@ -1,12 +1,11 @@
-import pandas as pd
-from pyspark.sql import DataFrame
 import mlflow
+import pandas as pd
 from mlflow.models.signature import ModelSignature
-from mlflow.types.schema import Schema, ColSpec
-
+from mlflow.types.schema import ColSpec, Schema
+from pyspark.sql import DataFrame
 
 from diabete_prediction.config_loader import load_config
-from diabete_prediction.utils import create_spark_schema_from_typed_list
+from diabete_prediction.utils import create_mlflow_schema_from_typed_list
 
 
 class ModelTrainer:
@@ -17,6 +16,7 @@ class ModelTrainer:
         self.feature_schema = self.config["InputData"]["feature_schema"]
         self.feature_names = [feat["name"] for feat in self.feature_schema]
         self.test_size = self.config["ModelTraining"]["test_size"]
+        self.experiment_name = self.config["ModelGeneral"]["test_size"]
 
     def split_train_test_data(
         self, df_sp_prepared: DataFrame, target_type="numerical"
@@ -56,7 +56,10 @@ class ModelTrainer:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=0
         )
-
+        print(X_train.shape)
+        print(X_test.shape)
+        print(y_train.shape)
+        print(y_test.shape)
         return X_train, X_test, y_train, y_test
 
     def mlflow_training(
@@ -64,13 +67,12 @@ class ModelTrainer:
         experiment_name: str,
         X_train: pd.DataFrame,
         y_train: pd.Series,
-        model:object,
         model_type: str = "regression",
         with_signature: bool = True,
         logs: bool = False,
         save_model=True,
     ):
-        """_summary_
+        """Train an ML model
 
         Args:
             experiment_name (str): name of the mlflow experiment
@@ -84,23 +86,23 @@ class ModelTrainer:
         Raises:
             ValueError: A model type can be either regression or classification_binary or classification_multi
         """
-
-        print(model)
+        from sklearn.linear_model import LinearRegression, LogisticRegression
 
         if model_type == "regression":
             output_schema = Schema([ColSpec("integer")])
-            experiment_name = experiment_name + "-regression"
+            full_experiment_name = self.experiment_name + "-regression"
+            model = LinearRegression()
+            print(model)
         elif model_type == "categorical_binary":
             output_schema = Schema([ColSpec("binary")])
-            experiment_name = experiment_name + "-classification"
-        elif model_type == "categorical_multi":
-            output_schema = Schema([ColSpec("string")])
-            experiment_name = experiment_name + "-classification"
+            full_experiment_name = self.experiment_name + "-classification"
+            model = LogisticRegression(C=1 / 0.1, solver="liblinear")
+            print(model)
         else:
             raise ValueError(
-                "A model type can be either regression or classification_binary or classification_multi"
+                "A model type can be either regression or classification_binary"
             )
-        mlflow.set_experiment(experiment_name)
+        mlflow.set_experiment(full_experiment_name)
 
         with mlflow.start_run():
             # Use autologging for all other parameters and metrics
@@ -113,7 +115,7 @@ class ModelTrainer:
             if with_signature:
                 print("Applying Signature...")
                 # Create the signature manually
-                input_schema = create_spark_schema_from_typed_list(self.feature_list)
+                input_schema = create_mlflow_schema_from_typed_list(self.feature_schema)
 
                 # Create the signature object
                 signature = ModelSignature(inputs=input_schema, outputs=output_schema)
@@ -122,9 +124,14 @@ class ModelTrainer:
                 mlflow.sklearn.log_model(model, "model", signature=signature)
 
             if save_model:
-                self.save_mlflow_model(experiment_name)
+                self.save_mlflow_model(full_experiment_name)
 
-    def save_mlflow_model(self, experiment_name):
+    def save_mlflow_model(self, experiment_name:str):
+        """Save and register an mlflow model
+
+        Args:
+            full_experiment_name (str): full name of the mlflow experiment (full_experiment_name)
+        """
         # Get the experiment by name
         model_name = experiment_name + "-model"
         exp = mlflow.get_experiment_by_name(experiment_name)

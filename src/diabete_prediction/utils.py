@@ -1,13 +1,16 @@
-from pyspark.sql.types import (
-    StructType,
-    StructField,
-    IntegerType,
-    DoubleType,
-    StringType,
-    FloatType,
-)
-import json
 import ast
+import json
+from typing import Any, Dict, List
+
+from mlflow.types.schema import ColSpec, Schema
+from pyspark.sql.types import (
+    DoubleType,
+    FloatType,
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+)
 
 
 def parse_value(value):
@@ -33,7 +36,7 @@ def parse_value(value):
         return value
 
 
-def create_spark_schema_from_typed_list(feature_list):
+def create_spark_schema_from_typed_list(feature_list: List[Dict[str, Any]]):
     """Convert a list of {"name": ..., "type": ...} dictionaries into a StructType schema.
     Each field in the resulting schema will be nullable and use the appropriate Spark type.
 
@@ -41,7 +44,7 @@ def create_spark_schema_from_typed_list(feature_list):
         ValueError: Unsupported field type:
 
     Returns:
-        _type_: _description_
+        StructType: pysark StructType schema
     """
     # Mapping from string type names to PySpark data type classes
     type_map = {
@@ -63,3 +66,23 @@ def create_spark_schema_from_typed_list(feature_list):
     # Create StructType schema from the list of StructField objects
     schema = StructType(fields)
     return schema
+
+
+def create_mlflow_schema_from_typed_list(feature_list: List[Dict[str, Any]]) -> Schema:
+    type_map = {
+        "integer": "long",
+        "double": "double",
+        "string": "string",
+        "float": "float",
+    }
+
+    cols = []
+    for feature in feature_list:
+        name = feature["name"]
+        dtype = feature["type"].lower()
+        mlflow_type = type_map.get(dtype)
+        if mlflow_type is None:
+            raise ValueError(f"Unsupported MLflow data type: {dtype}")
+        cols.append(ColSpec(type=mlflow_type, name=name))
+
+    return Schema(cols)

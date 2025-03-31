@@ -38,12 +38,23 @@ Copy/paste requirements.txt libraries into the pyproject.toml dependencies.
 
 ## Build the package
 Activate the environment when you want to use the package, for instance:
+Python 3.11.8 is required for this package, check it in the terminal: python --version > python 3.11.8
+Or in the terminal:
+```
+pyenv install 3.11.8
+```
+Then, create the environment:
 ```
 python -m venv pkg-test-env
 ```
 Activate the environment (in Windows):
 ```
 pkg-test-env\Scripts\activate
+```
+Ensure the environment is activates in this folder path:
+```
+where pip
+where python 
 ```
 In the terminal:
 Make sure you have the latest version of PyPA’s build installed:
@@ -79,7 +90,7 @@ print(diabete_prediction.__file__)
 shows it's loading from site-packages, not your source directory.
 
 ## Checks after installation
-Unzip the wheel and check if the config.ini file is there:
+Unzip the wheel and check if all the files are there:
 ```
 cd dist
 mkdir wheel_contents
@@ -87,7 +98,7 @@ cd wheel_contents
 tar -xf ../diabete_prediction-0.0.1-py3-none-any.whl
 dir diabete_prediction
 ```
-Check if diabete_prediction/config.ini is there.
+In particular, check if diabete_prediction/config.ini is there.
 
 ##  Clean old builds (in Windows)
 
@@ -97,12 +108,18 @@ Remove-Item -Recurse -Force dist, build
 Remove-Item -Recurse -Force *.egg-info
 ```
 
-## Modidfy the package in editable mode
+## Modidfy and build the package in editable mode
+This is meant for 
 In the pkg-test-env:
 ```
 pip uninstall diabete-prediction
 ```
 Then install your project in editable mode:
 ```
+python.exe -m pip install --upgrade pip #run the first time the environment is created
 pip install -e .
 ```
+
+## Install the wheel package in MS Fabric
+
+This Medium artical provides a good example: https://robkerr.ai/fabric-custom-libraries/

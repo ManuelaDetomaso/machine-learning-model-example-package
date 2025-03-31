@@ -24,7 +24,11 @@ def load_config(config_path: str = None) -> json:
     else:
         try:
             # Try to read it from installed package (wheel or site-packages)
-            with resources.files("diabete_prediction").joinpath("config.ini").open("r", encoding="utf-8") as f:
+            with (
+                resources.files("diabete_prediction")
+                .joinpath("config.ini")
+                .open("r", encoding="utf-8") as f
+            ):
                 config.read_file(f)
         except FileNotFoundError:
             # Fallback: detect editable mode and read from src/
