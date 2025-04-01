@@ -8,9 +8,18 @@ This package has the following structure:
 ml-examplemodel-package/
 ├───📁 src/
 │   ├───📁 diabete_prediction/
-│   ├───📄 prepare_training_data.py
+│   ├───📄 config_loader.py
+│   ├───📄 config.ini
+│   ├───📄 prepare_data.py
+│   ├───📄 score_data.py
+│   ├───📄 train_model.py
+│   ├───📄 utils.py
 │   └───📄 __init__.py
 ├───📁 tests/
+│   ├───📄 test_data_prepator.py
+│   ├───📄 test_model_scorer.py
+│   ├───📄 test_model_trainer.py
+│   └───📄 test_utils.py
 ├───📄 LICENSE.md
 ├───📄 pyproject.toml
 ├───📄 README.md

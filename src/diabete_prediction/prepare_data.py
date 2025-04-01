@@ -45,7 +45,7 @@ class DataPreparator:
         Returns:
             pd.DataFrame: spark data converted to a pandas DataFrame
         """
-        df = spark_df.toPandas()
+        df = spark_df.coalesce(1).toPandas()
         # Created column 'Risk' from formula
         df[self.risk_colname] = (
             df[self.target_colname] > self.target_threshold
