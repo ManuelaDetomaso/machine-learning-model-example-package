@@ -4,6 +4,7 @@ This is a simple example package for creating a simple Machine Learning model to
 
 This package has the following structure:
 
+```
 ml-examplemodel-package/
 ├───📁 src/
 │   ├───📁 diabete_prediction/
@@ -15,6 +16,7 @@ ml-examplemodel-package/
 ├───📄 README.md
 ├───📄 requirements.txt
 └───📄 setup.py
+```
 
 To update this repo tree: install tree-extended VS Code extension
 Right click in the sapce below ml-examplemodel-package and select "Get tree representation" 
@@ -32,7 +34,7 @@ pip list --format=freeze > requirements.txt
 ```
 This file may be used to create an environment using:
 ```
-conda create --name <env> --file <this file>
+conda create --name <env> --file <this file> # this file: requirements.txt or requirements-dev.txt
 ```
 Copy/paste requirements.txt libraries into the pyproject.toml dependencies.
 
@@ -51,12 +53,12 @@ Activate the environment (in Windows):
 ```
 pkg-test-env\Scripts\activate
 ```
-Ensure the environment is activates in this folder path:
+Check the environment is activated in this package folder path:
 ```
 where pip
 where python 
 ```
-In the terminal:
+Then, in the terminal:
 Make sure you have the latest version of PyPA’s build installed:
 ```
 py -m pip install --upgrade build

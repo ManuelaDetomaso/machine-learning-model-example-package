@@ -13,7 +13,7 @@ from pyspark.sql.types import (
 )
 
 
-def parse_value(value):
+def parse_value(value: Any):
     """Attempt to convert config values to appropriate Python types."""
     value = value.strip()
     if value.lower() in ["true", "false"]:
@@ -69,6 +69,17 @@ def create_spark_schema_from_typed_list(feature_list: List[Dict[str, Any]]):
 
 
 def create_mlflow_schema_from_typed_list(feature_list: List[Dict[str, Any]]) -> Schema:
+    """Create an mlflow schema from typed list
+
+    Args:
+        feature_list (List[Dict[str, Any]]): list of data columns dictionaries with their names and type
+
+    Raises:
+        ValueError: Unsupported MLflow data type: {dtype}
+
+    Returns:
+        Schema: mlflow Schema
+    """
     type_map = {
         "integer": "long",
         "double": "double",

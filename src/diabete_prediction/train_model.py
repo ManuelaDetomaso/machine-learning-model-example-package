@@ -16,7 +16,7 @@ class ModelTrainer:
         self.feature_schema = self.config["InputData"]["feature_schema"]
         self.feature_names = [feat["name"] for feat in self.feature_schema]
         self.test_size = self.config["ModelTraining"]["test_size"]
-        self.experiment_name = self.config["ModelGeneral"]["test_size"]
+        self.experiment_name = self.config["ModelGeneral"]["experiment_name"]
 
     def split_train_test_data(
         self, df_sp_prepared: DataFrame, target_type="numerical"
@@ -126,7 +126,7 @@ class ModelTrainer:
             if save_model:
                 self.save_mlflow_model(full_experiment_name)
 
-    def save_mlflow_model(self, experiment_name:str):
+    def save_mlflow_model(self, experiment_name: str):
         """Save and register an mlflow model
 
         Args:

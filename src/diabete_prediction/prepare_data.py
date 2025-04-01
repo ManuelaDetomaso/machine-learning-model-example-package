@@ -2,9 +2,9 @@ import warnings
 
 import pandas as pd
 from pyspark.sql import DataFrame
+from pyspark.sql.types import DoubleType, FloatType, IntegerType, StringType
 
 from diabete_prediction.config_loader import load_config
-from pyspark.sql.types import IntegerType, DoubleType, FloatType, StringType
 
 
 class DataPreparator:
@@ -18,6 +18,9 @@ class DataPreparator:
             "expected_target_proportions"
         ]
         self.feature_schema = self.config["InputData"]["feature_schema"]
+        self.prepared_inference_data = self.config["OutputData"][
+            "prepared_inference_data_table_name"
+        ]
 
     def _check_target_labels_proportions(self, df: pd.DataFrame):
         """Checks whether the categorised target values assume expected proportions
@@ -52,17 +55,20 @@ class DataPreparator:
 
         return df
 
-    def prepare_inference_data(self, df: DataFrame) -> DataFrame:
-        """
-        Cast DataFrame columns to types defined in feature_schema.
+    def cast_columns_data_types(self, df: DataFrame, save: bool = True) -> DataFrame:
+        """Cast data columns' types to the expected right data types
 
         Args:
             df (DataFrame): Input PySpark DataFrame.
-            feature_schema (list): List of dicts with 'name' and 'type' keys.
+            save (bool, optional): save the prepared dataframe. Defaults to True.
+
+        Raises:
+            ValueError: Unsupported type '{col_type_str}' for column '{col_name}'
 
         Returns:
             DataFrame: PySpark DataFrame with casted columns.
         """
+
         type_map = {
             "integer": IntegerType(),
             "double": DoubleType(),
@@ -81,5 +87,9 @@ class DataPreparator:
                 )
 
             df = df.withColumn(col_name, df[col_name].cast(spark_type))
-
+        if save:
+            # Save the results (the original features PLUS the prediction)
+            df.write.format("delta").mode("overwrite").option(
+                "mergeSchema", "true"
+            ).saveAsTable(self.prepared_inference_data)
         return df
