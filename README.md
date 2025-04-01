@@ -110,7 +110,7 @@ Remove-Item -Recurse -Force dist, build
 Remove-Item -Recurse -Force *.egg-info
 ```
 
-## Modidfy and build the package in editable mode
+## Modify and build the package in editable mode
 This is meant for 
 In the pkg-test-env:
 ```
