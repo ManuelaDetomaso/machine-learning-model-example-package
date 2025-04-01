@@ -1,8 +1,12 @@
 import configparser
 import json
+import os
 from importlib import resources  # Python 3.9+
 
 from diabete_prediction.utils import parse_value
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 def load_config(config_path: str = None) -> json:
@@ -18,7 +22,7 @@ def load_config(config_path: str = None) -> json:
     config = configparser.ConfigParser()
 
     if config_path:
-        print("🔧 Loading config from path:", config_path)
+        logger.info("🔧 Loading config from path: %s", config_path)
         with open(config_path, "r", encoding="utf-8") as f:
             config.read_file(f)
     else:
@@ -33,7 +37,7 @@ def load_config(config_path: str = None) -> json:
         except FileNotFoundError:
             # Fallback: detect editable mode and read from src/
             dev_path = os.path.join("src", "diabete_prediction", "config.ini")
-            print("🛠 Fallback to dev config path:", dev_path)
+            logger.warning("🛠 Fallback to dev config path: %s", dev_path)
             with open(dev_path, "r", encoding="utf-8") as f:
                 config.read_file(f)
 
