@@ -24,7 +24,7 @@ ml-examplemodel-package/
 ├───📄 pyproject.toml
 ├───📄 README.md
 ├───📄 requirements.txt
-└───📄 setup.py
+└───📄 test_pkg.ipynb
 ```
 
 To update this repo tree: install tree-extended VS Code extension
@@ -104,7 +104,7 @@ pip install dist/diabete_prediction-0.0.1-py3-none-any.whl
 pip install --only-binary :all: -r requirements.txt
 pip install --no-deps dist/your_wheel.whl
 ```
-In a python file or notebook check that the following print
+In a python file or notebook (use test_pkg.ipynb) check that the following print
 ```
 print(diabete_prediction.__file__) 
 ```
