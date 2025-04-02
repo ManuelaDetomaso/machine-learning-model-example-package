@@ -16,7 +16,9 @@ class ModelScorer:
         self.config = load_config()
         self.feature_schema = self.config["InputData"]["feature_schema"]
         self.feature_names = [feat["name"] for feat in self.feature_schema]
-        self.predictions_table_name = self.config["OutputData"]["predictions_table_name"]
+        self.predictions_table_name = self.config["OutputData"][
+            "predictions_table_name"
+        ]
 
     def _get_predict_udf(self, model_uri: str) -> pd.Series:
         """
@@ -76,7 +78,9 @@ class ModelScorer:
         logger.info("✅ Predictions column added to DataFrame.")
 
         if save:
-            logger.info("💾 Saving predictions to Delta table: %s", self.predictions_table_name)
+            logger.info(
+                "💾 Saving predictions to Delta table: %s", self.predictions_table_name
+            )
             df_preds.write.format("delta").mode("overwrite").option(
                 "mergeSchema", "true"
             ).saveAsTable(self.predictions_table_name)

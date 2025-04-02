@@ -16,9 +16,16 @@ class DataPreparator:
         self.risk_colname = self.config["InputData"]["risk_colname"]
         self.target_colname = self.config["InputData"]["target_colname"]
         self.target_threshold = self.config["InputData"]["target_threshold"]
-        self.expected_target_proportions = self.config["InputData"]["expected_target_proportions"]
+        self.expected_target_proportions = self.config["InputData"][
+            "expected_target_proportions"
+        ]
         self.feature_schema = self.config["InputData"]["feature_schema"]
-        self.prepared_inference_data = self.config["OutputData"]["prepared_inference_data_table_name"]
+        self.prepared_traning_data = self.config["OutputData"][
+            "prepared_training_data_table_name"
+        ]
+        self.prepared_inference_data = self.config["OutputData"][
+            "prepared_inference_data_table_name"
+        ]
 
     def _check_target_labels_proportions(self, df: pd.DataFrame):
         """Checks whether the categorised target values assume expected proportions
@@ -34,7 +41,9 @@ class DataPreparator:
         else:
             logger.info("✅ Target values proportions are as expected.")
 
-    def prepare_training_data(self, spark_df: DataFrame) -> pd.DataFrame:
+    def prepare_training_data(
+        self, spark_df: DataFrame, save: bool = True
+    ) -> pd.DataFrame:
         """Data cleaning and preparation
 
         Args:
@@ -53,10 +62,18 @@ class DataPreparator:
         self._check_target_labels_proportions(df)
 
         logger.info("✅ Data preparation complete.")
+        if save:
+            logger.info(
+                "💾 Saving prepared training data to Delta table: %s",
+                self.prepared_inference_data,
+            )
+            df.write.format("delta").mode("overwrite").option(
+                "mergeSchema", "true"
+            ).saveAsTable(self.prepared_traning_data)
         return df
 
     def prepare_inference_data(self, df: DataFrame, save: bool = True) -> DataFrame:
-        """Cast data columns' types to the expected right data types
+        """Cast inference data columns' types to the expected right data types
 
         Args:
             df (DataFrame): Input PySpark DataFrame.
@@ -83,7 +100,11 @@ class DataPreparator:
             spark_type = type_map.get(col_type_str)
 
             if spark_type is None:
-                logger.error("❌ Unsupported column type: '%s' for column '%s'", col_type_str, col_name)
+                logger.error(
+                    "❌ Unsupported column type: '%s' for column '%s'",
+                    col_type_str,
+                    col_name,
+                )
                 raise ValueError(
                     f"Unsupported type '{col_type_str}' for column '{col_name}'"
                 )
@@ -92,7 +113,10 @@ class DataPreparator:
             df = df.withColumn(col_name, df[col_name].cast(spark_type))
 
         if save:
-            logger.info("💾 Saving casted DataFrame to Delta table: %s", self.prepared_inference_data)
+            logger.info(
+                "💾 Saving prepared inference data to Delta table: %s",
+                self.prepared_inference_data,
+            )
             df.write.format("delta").mode("overwrite").option(
                 "mergeSchema", "true"
             ).saveAsTable(self.prepared_inference_data)

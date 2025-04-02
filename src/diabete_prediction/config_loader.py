@@ -6,6 +6,7 @@ from importlib import resources  # Python 3.9+
 from diabete_prediction.utils import parse_value
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

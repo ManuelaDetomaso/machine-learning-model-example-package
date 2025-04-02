@@ -40,7 +40,10 @@ class ModelTrainer:
                 df_prepared[self.risk_colname].values,
             )
         else:
-            logger.error("Invalid target_type '%s'. Must be 'numerical' or 'categorical'.", target_type)
+            logger.error(
+                "Invalid target_type '%s'. Must be 'numerical' or 'categorical'.",
+                target_type,
+            )
             raise ValueError("Indicate a target type, either numerical or categorical")
 
         X_train, X_test, y_train, y_test = train_test_split(
@@ -48,8 +51,12 @@ class ModelTrainer:
         )
 
         logger.info("🔀 Data split complete.")
-        logger.debug("X_train shape: %s | X_test shape: %s", X_train.shape, X_test.shape)
-        logger.debug("y_train shape: %s | y_test shape: %s", y_train.shape, y_test.shape)
+        logger.debug(
+            "X_train shape: %s | X_test shape: %s", X_train.shape, X_test.shape
+        )
+        logger.debug(
+            "y_train shape: %s | y_test shape: %s", y_train.shape, y_test.shape
+        )
 
         return X_train, X_test, y_train, y_test
 
@@ -78,7 +85,9 @@ class ModelTrainer:
             logger.info("📊 Initialized LogisticRegression model.")
         else:
             logger.error("Unsupported model type: %s", model_type)
-            raise ValueError("A model type can be either regression or classification_binary")
+            raise ValueError(
+                "A model type can be either regression or classification_binary"
+            )
 
         mlflow.set_experiment(full_experiment_name)
 
