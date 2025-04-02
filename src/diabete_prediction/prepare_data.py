@@ -55,7 +55,7 @@ class DataPreparator:
         logger.info("✅ Data preparation complete.")
         return df
 
-    def cast_columns_data_types(self, df: DataFrame, save: bool = True) -> DataFrame:
+    def prepare_inference_data(self, df: DataFrame, save: bool = True) -> DataFrame:
         """Cast data columns' types to the expected right data types
 
         Args:
