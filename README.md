@@ -33,6 +33,18 @@ The select "No" when prompted on "choose custom configuration".
 
 ## Manage package dependencies
 
+### Install existing dependencies
+Install requirements-dev.txt or requirements.txt in pkg-test-env:
+```
+pip install -r requirements-dev.txt
+```
+Or this file may be used to create a new environment using:
+```
+conda create --name <env> --file <this file> # this file: requirements.txt or requirements-dev.txt
+```
+
+### Create/ Update the file of dependencies
+
 Generate the file of this package dependencies with:
 ```
 conda list -e > requirements.txt
@@ -41,17 +53,15 @@ For those getting odd path references in requirements.txt, use:
 ```
 pip list --format=freeze > requirements.txt
 ```
-This file may be used to create an environment using:
-```
-conda create --name <env> --file <this file> # this file: requirements.txt or requirements-dev.txt
-```
-Copy/paste requirements.txt libraries into the pyproject.toml dependencies.
+If needed, copy/paste requirements.txt libraries into the pyproject.toml dependencies.
 
 ## Build the package
 Activate the environment when you want to use the package, for instance:
 Python 3.11.8 is required for this package, check it in the terminal: python --version > python 3.11.8
 Or in the terminal:
 ```
+python --version
+# if version si different from 3.11, then do:
 pyenv install 3.11.8
 ```
 Then, create the environment:
@@ -123,7 +133,8 @@ Remove-Item -Recurse -Force *.egg-info
 This is meant for 
 In the pkg-test-env:
 ```
-pip uninstall diabete-prediction
+pip uninstall diabete-prediction -y
+pip uninstall diabete_prediction -y
 ```
 Then install your project in editable mode:
 ```
