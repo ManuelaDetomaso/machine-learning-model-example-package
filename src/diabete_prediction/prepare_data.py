@@ -3,12 +3,13 @@ import logging
 
 import pandas as pd
 from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType, FloatType, IntegerType, StringType
 
 from diabete_prediction.config_loader import load_config
 
 logger = logging.getLogger(__name__)
-
+spark = SparkSession.builder.getOrCreate()
 
 class DataPreparator:
     def __init__(self):
@@ -20,10 +21,10 @@ class DataPreparator:
             "expected_target_proportions"
         ]
         self.feature_schema = self.config["InputData"]["feature_schema"]
-        self.prepared_traning_data = self.config["OutputData"][
+        self.prepared_training_data_table = self.config["OutputData"][
             "prepared_training_data_table_name"
         ]
-        self.prepared_inference_data = self.config["OutputData"][
+        self.prepared_inference_data_table = self.config["OutputData"][
             "prepared_inference_data_table_name"
         ]
 
@@ -36,6 +37,7 @@ class DataPreparator:
         proportion_dict = dict(
             round(df[self.risk_colname].value_counts() / len(df[self.risk_colname]), 2)
         )
+        logger.info("Target proportions: %s", proportion_dict)
         if proportion_dict != self.expected_target_proportions:
             warnings.warn("Target labels proportions deviate from expectations.")
         else:
@@ -63,13 +65,14 @@ class DataPreparator:
 
         logger.info("✅ Data preparation complete.")
         if save:
+            df_sp = spark.createDataFrame(df)
             logger.info(
                 "💾 Saving prepared training data to Delta table: %s",
                 self.prepared_inference_data,
             )
-            df.write.format("delta").mode("overwrite").option(
+            df_sp.write.format("delta").mode("overwrite").option(
                 "mergeSchema", "true"
-            ).saveAsTable(self.prepared_traning_data)
+            ).saveAsTable(self.prepared_training_data_table)
         return df
 
     def prepare_inference_data(self, df: DataFrame, save: bool = True) -> DataFrame:
@@ -115,11 +118,11 @@ class DataPreparator:
         if save:
             logger.info(
                 "💾 Saving prepared inference data to Delta table: %s",
-                self.prepared_inference_data,
+                self.prepared_inference_data_table,
             )
             df.write.format("delta").mode("overwrite").option(
                 "mergeSchema", "true"
-            ).saveAsTable(self.prepared_inference_data)
+            ).saveAsTable(self.prepared_inference_data_table)
 
         logger.info("✅ Column casting complete.")
         return df
