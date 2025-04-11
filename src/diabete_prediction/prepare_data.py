@@ -1,15 +1,15 @@
-import warnings
 import logging
+import warnings
 
 import pandas as pd
-from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import DoubleType, FloatType, IntegerType, StringType
 
 from diabete_prediction.config_loader import load_config
 
 logger = logging.getLogger(__name__)
 spark = SparkSession.builder.getOrCreate()
+
 
 class DataPreparator:
     def __init__(self):

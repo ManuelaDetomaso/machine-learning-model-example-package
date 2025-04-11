@@ -1,14 +1,13 @@
 import logging
+from typing import Dict, List, Optional
+
+import mlflow
 import mlflow.pyfunc
 import pandas as pd
+from mlflow.tracking import MlflowClient
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import pandas_udf
 from pyspark.sql.types import FloatType
-
-import mlflow
-from mlflow.tracking import MlflowClient
-from typing import List, Dict, Optional
-
 
 from diabete_prediction.config_loader import load_config
 
@@ -71,7 +70,9 @@ class ModelScorer:
 
         # Find matching experiments
         experiments = mlflow.search_experiments()
-        matching_experiments = [exp for exp in experiments if exp.name.startswith(prefix)]
+        matching_experiments = [
+            exp for exp in experiments if exp.name.startswith(prefix)
+        ]
 
         for exp in matching_experiments:
             exp_versions = []
@@ -86,15 +87,19 @@ class ModelScorer:
                 versions = client.search_model_versions(f"run_id = '{run_id}'")
                 # return metadata for each experiment
                 for v in versions:
-                    exp_versions.append({
-                        "model_name": v.name,
-                        "version": int(v.version),
-                        "stage": v.current_stage,
-                        "run_id": v.run_id,
-                    })
+                    exp_versions.append(
+                        {
+                            "model_name": v.name,
+                            "version": int(v.version),
+                            "stage": v.current_stage,
+                            "run_id": v.run_id,
+                        }
+                    )
 
             # Sort versions (optional)
-            exp_versions = sorted(exp_versions, key=lambda x: x["version"], reverse=True)
+            exp_versions = sorted(
+                exp_versions, key=lambda x: x["version"], reverse=True
+            )
 
             if return_latest_only and exp_versions:
                 model_versions[exp.name] = [exp_versions[0]]
@@ -116,7 +121,7 @@ class ModelScorer:
 
         Args:
             df_inference (DataFrame): Input PySpark DataFrame with features
-            experiment_name (str): MLflow experiment name (used to construct model URI), use: 
+            experiment_name (str): MLflow experiment name (used to construct model URI), use:
                 config["ModelGeneral"]["experiment"]
             model_type (str): Model type (regression or classification_binary)
             model_version (None): Version of the registered model, if None, the last version is retrieved
@@ -127,7 +132,7 @@ class ModelScorer:
         """
         # if model version is None, use the last available
         if model_version is None:
-            #get models with searche experiment name and their last versions
+            # get models with searche experiment name and their last versions
             latest_versions = self.get_model_versions_by_experiment_prefix(
                 experiment_name, return_latest_only=True
             )

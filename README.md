@@ -61,10 +61,10 @@ Python 3.11.8 is required for this package, check it in the terminal: python --v
 Or in the terminal:
 ```
 python --version
-# if version si different from 3.11, then do:
+# if version is different from 3.11, then do:
 pyenv install 3.11.8
 ```
-Then, create the environment:
+Create the environment:
 ```
 python -m venv pkg-test-env
 ```

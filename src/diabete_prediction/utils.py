@@ -3,14 +3,8 @@ import json
 from typing import Any, Dict, List
 
 from mlflow.types.schema import ColSpec, Schema
-from pyspark.sql.types import (
-    DoubleType,
-    FloatType,
-    IntegerType,
-    StringType,
-    StructField,
-    StructType,
-)
+from pyspark.sql.types import (DoubleType, FloatType, IntegerType, StringType,
+                               StructField, StructType)
 
 
 def parse_value(value: Any):
