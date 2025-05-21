@@ -54,6 +54,7 @@ class DataPreparator:
         Returns:
             pd.DataFrame: spark data converted to a pandas DataFrame
         """
+        
         logger.info("🧹 Preparing training data from Spark DataFrame...")
         df = spark_df.coalesce(1).toPandas()
 

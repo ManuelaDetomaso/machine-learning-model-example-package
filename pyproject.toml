@@ -36,6 +36,23 @@ where = ["src"]
 [tool.setuptools.package-data]
 diabete_prediction = ["config.ini"]
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov=diabete_prediction --cov-report=term-missing -ra"
+testpaths = [
+    "tests"
+]
+
+[tool.coverage.run]
+branch = true
+source = [
+    "diabete_prediction"
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
 [project.urls]
-Homepage = "https://github.com/ManuelaDetomaso/mlmodelexamplepackage"
-Issues = "https://github.com/ManuelaDetomaso/mlmodelexamplepackage/issues"
+Homepage = "https://dev.azure.com/FabricGIT/_git/MLModelExample"
+Issues = "https://dev.azure.com/FabricGIT/MLModelExample/_boards/board/t/MLModelExample%20Team/Issues"

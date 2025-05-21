@@ -33,6 +33,28 @@ The select "No" when prompted on "choose custom configuration".
 
 ## Manage package dependencies
 
+Activate the environment when you want to use the package, for instance:
+Python 3.11.8 is required for this package, check it in the terminal: python --version > python 3.11.8
+Or in the terminal:
+```
+python --version
+# if version is different from 3.11, then do:
+pyenv install 3.11.8
+```
+Create the environment:
+```
+python -m venv pkg-test-env
+```
+Activate the environment (in Windows):
+```
+pkg-test-env\Scripts\activate
+```
+Check the environment is activated in this package folder path:
+```
+where pip
+where python 
+```
+
 ### Install existing dependencies
 Install requirements-dev.txt or requirements.txt in pkg-test-env:
 ```
@@ -55,29 +77,15 @@ pip list --format=freeze > requirements.txt
 ```
 If needed, copy/paste requirements.txt libraries into the pyproject.toml dependencies.
 
+### Deactivate and remove the environment
+```
+deactivate
+rmdir /s /q pkg-test-env  # Or delete it manually
+```
+
 ## Build the package
-Activate the environment when you want to use the package, for instance:
-Python 3.11.8 is required for this package, check it in the terminal: python --version > python 3.11.8
-Or in the terminal:
-```
-python --version
-# if version is different from 3.11, then do:
-pyenv install 3.11.8
-```
-Create the environment:
-```
-python -m venv pkg-test-env
-```
-Activate the environment (in Windows):
-```
-pkg-test-env\Scripts\activate
-```
-Check the environment is activated in this package folder path:
-```
-where pip
-where python 
-```
-Then, in the terminal:
+
+In the terminal:
 Make sure you have the latest version of PyPA’s build installed:
 ```
 py -m pip install --upgrade build
@@ -144,7 +152,7 @@ pip install -e .
 
 ## Install the wheel package in MS Fabric
 
-This Medium artical provides a good example: https://robkerr.ai/fabric-custom-libraries/
+This Medium article provides a good example: https://robkerr.ai/fabric-custom-libraries/
 
 ## Generating Docs
 

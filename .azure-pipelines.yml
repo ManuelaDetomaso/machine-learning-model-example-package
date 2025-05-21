@@ -1,0 +1,38 @@
+# 1 Triggers on main — runs on pushes to your main branch.
+# 2 Sets up Python 3.11 — matching your local dev environment.
+# 3 Installs dependencies from requirements-dev.txt — the key file for your test tooling.
+# 3 Runs pytest — with verbose output and test result export.
+# 4 Publishes test results to Azure DevOps UI — so you can view them under the Tests tab.
+
+trigger:
+  branches:
+    include:
+      - main  # Or your default branch
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  PYSPARK_PYTHON: python
+  PYSPARK_DRIVER_PYTHON: python
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'  # Match your dev environment
+      addToPath: true
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements-dev.txt
+    displayName: 'Install dev dependencies'
+
+  - script: |
+      pytest tests/ --junitxml=TEST-results.xml --maxfail=1 --disable-warnings -v
+    displayName: 'Run Pytest'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/TEST-*.xml'
+      testRunTitle: 'Pytest Results'

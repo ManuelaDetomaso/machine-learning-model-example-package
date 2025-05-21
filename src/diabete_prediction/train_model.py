@@ -114,7 +114,7 @@ class ModelTrainer:
         last_run = mlflow.search_runs(
             exp.experiment_id, order_by=["start_time DESC"], max_results=1
         )
-
+        
         last_run_id = last_run.iloc[0]["run_id"]
         logger.info("💾 Registering model from run ID: %s", last_run_id)
 
